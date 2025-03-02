@@ -11,7 +11,7 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     const payloadString = await request.text();
     const headerPayload = request.headers;
-
+    console.log("try")
     try {
       const result = await ctx.runAction(internal.clerk.fulfill, {
         payload: payloadString,
@@ -25,7 +25,7 @@ http.route({
       switch (result.type) {
         case "user.created":
           await ctx.runMutation(internal.users.createUser, {
-            tokenIdentifier: result.data.id,
+            tokenIdentifier: `https://capital-spaniel-28.clerk.accounts.dev|${result.data.id}`,
 
           });
           break;
