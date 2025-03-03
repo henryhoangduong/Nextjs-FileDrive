@@ -8,13 +8,13 @@ export const createFile = mutation({
   },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
-    console.log(identity)
+    console.log(identity);
     if (!identity) {
       throw new ConvexError("you must be logged in to upload a file");
     }
     await ctx.db.insert("files", {
       name: args.name,
-      orgId:args.orgId,
+      orgId: args.orgId,
     });
   },
 });

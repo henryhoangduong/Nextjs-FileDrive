@@ -13,15 +13,12 @@ import { api } from "../../convex/_generated/api";
 
 export default function Home() {
   const organization = useOrganization();
-  const user =useUser()
+  const user = useUser();
   let orgId = null;
   if (organization.isLoaded && user.isLoaded) {
-    orgId=organization.organization?.id ??user.user?.id
+    orgId = organization.organization?.id ?? user.user?.id;
   }
-  const files = useQuery(
-    api.files.getFiles,
-    orgId ?{orgId}:"skip"
-  );
+  const files = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
   const createFile = useMutation(api.files.createFile);
   return (
     <div className="flex min-h-screen flex-col items-center justify-between  p-24">
@@ -35,19 +32,19 @@ export default function Home() {
           <Button>Sign In</Button>
         </SignInButton>
       </SignedOut>
-      <Button onClick={() => {
-        if (!orgId) return;
-        createFile({
-          name: "hello world",
-          orgId 
-        })
-      }}>
+      <Button
+        onClick={() => {
+          if (!orgId) return;
+          createFile({
+            name: "hello world",
+            orgId,
+          });
+        }}
+      >
         Click me
       </Button>
       {files?.map((file) => {
-        return (
-          <div key={file.name}>{file.name}</div>
-        )
+        return <div key={file.name}>{file.name}</div>;
       })}
     </div>
   );

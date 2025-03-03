@@ -11,7 +11,7 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     const payloadString = await request.text();
     const headerPayload = request.headers;
-    console.log("try")
+    console.log("try");
     try {
       const result = await ctx.runAction(internal.clerk.fulfill, {
         payload: payloadString,
@@ -26,11 +26,14 @@ http.route({
         case "user.created":
           await ctx.runMutation(internal.users.createUser, {
             tokenIdentifier: `https://capital-spaniel-28.clerk.accounts.dev|${result.data.id}`,
-
           });
           break;
-
-
+        case "organizationMembership.created":
+          await ctx.runMutation(internal.users.addOrgIdToUser, {
+              tokenIdentifier: `https://capital-spaniel-28.clerk.accounts.dev|${result.data.id}`,
+              orgId: result.data.organization.id
+          });
+          break;
       }
 
       return new Response(null, {
