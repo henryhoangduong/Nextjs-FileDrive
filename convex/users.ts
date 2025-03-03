@@ -18,7 +18,7 @@ export const addOrgIdToUser  = internalMutation({
         if (!user) {
             throw new ConvexError("expect user to be defined")
         }
-    await ctx.db.insert("users", {
+    await ctx.db.patch(user._id, {
       tokenIdentifier: args.tokenIdentifier,
       orgIds: [...user.orgIds , args.orgId],
     });
