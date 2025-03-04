@@ -24,7 +24,8 @@ import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   title: z.string().min(1).max(200),
-  file: z.custom<File>((val) => val instanceof File, "Required"),
+  file: z.custom<FileList>((val) => val instanceof FileList, "Required")
+  .refine((files)=> files.length>0, "Required")
 });
 
 export default function Home() {
@@ -34,9 +35,10 @@ export default function Home() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      file: null,
+      file: undefined,
     },
   });
+  const fileRef = form.register("file");
   let orgId = null;
   if (organization.isLoaded && user.isLoaded) {
     orgId = organization.organization?.id ?? user.user?.id;
@@ -70,7 +72,7 @@ export default function Home() {
               <DialogTitle>Upload your file here</DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="gap-3 flex flex-col">
                 <FormField
                   name="title"
                   control={form.control}
@@ -86,18 +88,15 @@ export default function Home() {
                 <FormField
                   name="file"
                   control={form.control}
-                  render={({ field: { onChange }, ...field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>File</FormLabel>
                       <FormControl>
                         <Input
                           type="file"
-                          {...field}
+                          {...fileRef}
                           className="cursor-pointer"
-                          onChange={(event) => {
-                            if (!event.target.files) return;
-                            onChange(event.target.files[0]);
-                          }}
+                          
                         />
                       </FormControl>
                     </FormItem>
@@ -109,10 +108,6 @@ export default function Home() {
           </DialogContent>
         </Dialog>
       </div>
-
-      {files?.map((file) => {
-        return <div key={file.name}>{file.name}</div>;
-      })}
     </main>
   );
 }
