@@ -30,8 +30,8 @@ http.route({
           break;
         case "organizationMembership.created":
           await ctx.runMutation(internal.users.addOrgIdToUser, {
-              tokenIdentifier: `https://capital-spaniel-28.clerk.accounts.dev|${result.data.id}`,
-              orgId: result.data.organization.id
+            tokenIdentifier: `https://capital-spaniel-28.clerk.accounts.dev|${result.data.id}`,
+            orgId: result.data.organization.id,
           });
           break;
       }
