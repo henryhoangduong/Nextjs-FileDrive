@@ -28,7 +28,7 @@ async function hasAccessToOrg(
 export const createFile = mutation({
   args: {
     name: v.string(),
-    fileId:  v.id("_storage"),
+    fileId: v.id("_storage"),
     orgId: v.string(),
   },
   async handler(ctx, args) {
@@ -43,7 +43,7 @@ export const createFile = mutation({
 
     await ctx.db.insert("files", {
       name: args.name,
-      fileId:args.fileId,
+      fileId: args.fileId,
       orgId: args.orgId,
     });
   },
