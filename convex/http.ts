@@ -2,6 +2,7 @@ import { httpRouter } from "convex/server";
 
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 const http = httpRouter();
 
@@ -11,7 +12,6 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     const payloadString = await request.text();
     const headerPayload = request.headers;
-    console.log("try");
     try {
       const result = await ctx.runAction(internal.clerk.fulfill, {
         payload: payloadString,
@@ -21,7 +21,6 @@ http.route({
           "svix-signature": headerPayload.get("svix-signature")!,
         },
       });
-
       switch (result.type) {
         case "user.created":
           await ctx.runMutation(internal.users.createUser, {
@@ -44,6 +43,22 @@ http.route({
         status: 400,
       });
     }
+  }),
+});
+
+http.route({
+  path: "/getImage",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    const { searchParams } = new URL(request.url);
+    const storageId = searchParams.get("storageId")! as Id<"_storage">;
+    const blob = await ctx.storage.get(storageId);
+    if (blob === null) {
+      return new Response("Image not found", {
+        status: 404,
+      });
+    }
+    return new Response(blob);
   }),
 });
 

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import React, { useState } from "react";
-import { Doc } from "../../convex/_generated/dataModel";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,7 @@ import {
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
+import Image from "next/image";
 
 function FileCardActions({ file }: { file: Doc<"files"> }) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -58,7 +59,6 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
       <DropdownMenu>
         <DropdownMenuTrigger>
           <MoreVertical />
@@ -78,6 +78,12 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
     </>
   );
 }
+function getFileUrl(fileId: Id<"_storage">): string {
+  const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL;
+  const getImageUrl = new URL(`${convexSiteUrl}/getImage`);
+  getImageUrl.searchParams.set("storageId", fileId);
+  return getImageUrl.href;
+}
 
 const FileCard = ({ file }: { file: Doc<"files"> }) => {
   return (
@@ -91,7 +97,14 @@ const FileCard = ({ file }: { file: Doc<"files"> }) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p>Card Content</p>
+        {file.type == "image" && (
+          <Image
+            src={getFileUrl(file.fileId)}
+            width={"300"}
+            height={"300"}
+            alt={file.name}
+          />
+        )}
       </CardContent>
       <CardFooter>
         <Button>Download</Button>
