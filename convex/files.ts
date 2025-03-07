@@ -56,11 +56,30 @@ export const getFiles = query({
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      return [];
+      throw new ConvexError("you dont have access to this org");
     }
     return ctx.db
       .query("files")
       .withIndex("by_orgId", (q) => q.eq("orgId", args.orgId))
       .collect();
+  },
+});
+
+export const deleteFile = mutation({
+  args: { filedId: v.id("files") },
+  async handler(ctx, args) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("you must be logged in to upload a file");
+    }
+    const file = await ctx.db.get(args.filedId);
+    if (!file) {
+      throw new ConvexError("This file does not exist");
+    }
+    const hasAccess = hasAccessToOrg(ctx, identity.tokenIdentifier, file.orgId);
+    if (!hasAccess) {
+      throw new ConvexError("you dont have access to delete this file");
+    }
+    await ctx.db.delete(args.filedId);
   },
 });
