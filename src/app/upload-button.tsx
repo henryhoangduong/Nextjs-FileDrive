@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -121,12 +122,20 @@ const UploadButton = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={form.formState.isLoading}>
-              {form.formState.isLoading && <Loader2 className="animate-spin" />}
-              Submit
-            </Button>
           </form>
         </Form>
+        <DialogFooter>
+          <Button
+            type="submit"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting && (
+              <Loader2 className="animate-spin" />
+            )}
+            Submit
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
