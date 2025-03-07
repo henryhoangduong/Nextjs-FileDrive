@@ -51,8 +51,6 @@ const UploadButton = () => {
   const createFile = useMutation(api.files.createFile);
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    console.log(values.file);
     if (!orgId) return;
     const postUrl = await generateUploadUrl();
     const result = await fetch(postUrl, {
