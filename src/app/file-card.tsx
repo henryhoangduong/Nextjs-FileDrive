@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import {
   DropdownMenu,
@@ -14,7 +14,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, TrashIcon } from "lucide-react";
+import {
+  FileTextIcon,
+  GanttChartIcon,
+  ImageIcon,
+  MoreVertical,
+  TrashIcon,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -86,28 +92,34 @@ function getFileUrl(fileId: Id<"_storage">): string {
 }
 
 const FileCard = ({ file }: { file: Doc<"files"> }) => {
+  const typeIcons = {
+    image: <ImageIcon />,
+    pdf: <FileTextIcon />,
+    csv: <GanttChartIcon />,
+  } as Record<Doc<"files">["type"], ReactNode>;
+
   return (
     <Card>
       <CardHeader className="relative ">
-        <CardTitle>
+        <CardTitle className="flex gap-2 text-base font-normal">
+          <div className="flex justify-center">{typeIcons[file.type]}</div>{" "}
           {file.name}
-          <div className="absolute top-2 right-2">
-            <FileCardActions file={file} />{" "}
-          </div>
         </CardTitle>
+        <div className="absolute top-2 right-2">
+          <FileCardActions file={file} />
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-[200px] flex justify-center items-center">
         {file.type == "image" && (
-          <Image
-            src={getFileUrl(file.fileId)}
-            width={"300"}
-            height={"300"}
-            alt={file.name}
-          />
+          <Image alt={file.name} width="200" height="100" src={getFileUrl(file.fileId)} />
         )}
+        {file.type == "csv" && <GanttChartIcon className="w-20" />}
+        {file.type == "pdf" && <FileTextIcon className="w-20" />}
       </CardContent>
       <CardFooter>
-        <Button>Download</Button>
+        <Button className="flex justify-center" onClick={()=>{
+            window.open(getFileUrl(file.fileId),"_blank")
+        }}>Download</Button>
       </CardFooter>
     </Card>
   );
