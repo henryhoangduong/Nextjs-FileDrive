@@ -6,6 +6,7 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import FileCard from "./file-card";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
+import SearchBar from "./search-bar";
 
 export default function Home() {
   const organization = useOrganization();
@@ -40,6 +41,7 @@ export default function Home() {
             <h1 className="text-4xl font-bold">Your files</h1>
             <UploadButton />
           </div>
+          <SearchBar />
           <div className="grid grid-cols-4 gap-4">
             {files?.map((file) => {
               return <FileCard key={file._id} file={file} />;

@@ -111,15 +111,25 @@ const FileCard = ({ file }: { file: Doc<"files"> }) => {
       </CardHeader>
       <CardContent className="h-[200px] flex justify-center items-center">
         {file.type == "image" && (
-          <Image alt={file.name} width="200" height="100" src={getFileUrl(file.fileId)} />
+          <Image
+            alt={file.name}
+            width="200"
+            height="100"
+            src={getFileUrl(file.fileId)}
+          />
         )}
         {file.type == "csv" && <GanttChartIcon className="w-20" />}
         {file.type == "pdf" && <FileTextIcon className="w-20" />}
       </CardContent>
       <CardFooter>
-        <Button className="flex justify-center" onClick={()=>{
-            window.open(getFileUrl(file.fileId),"_blank")
-        }}>Download</Button>
+        <Button
+          className="flex justify-center"
+          onClick={() => {
+            window.open(getFileUrl(file.fileId), "_blank");
+          }}
+        >
+          Download
+        </Button>
       </CardFooter>
     </Card>
   );
