@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -16,26 +16,36 @@ const formSchema = z.object({
   query: z.string().min(1).max(200),
 });
 
-const SearchBar = () => {
+const SearchBar = ({
+  query,
+  setQuery,
+}: {
+  query: string;
+  setQuery: Dispatch<SetStateAction<string>>;
+}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       query: "",
     },
   });
-  async function onSubmit(values: z.infer<typeof formSchema>) {}
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setQuery(values.query);
+  }
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className=" flex gap-2 items-center "
+        >
           <FormField
             name="query"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn..." {...field} />
+                  <Input placeholder="search file..." {...field} />
                 </FormControl>
               </FormItem>
             )}
