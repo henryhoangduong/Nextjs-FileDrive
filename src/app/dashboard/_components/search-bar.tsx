@@ -2,13 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormControl,
-  FormLabel,
-} from "@/components/ui/form";
+import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, SearchIcon } from "lucide-react";
@@ -17,7 +11,6 @@ const formSchema = z.object({
 });
 
 const SearchBar = ({
-  query,
   setQuery,
 }: {
   query: string;
