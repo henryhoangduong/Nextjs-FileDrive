@@ -75,7 +75,9 @@ export const getFiles = query({
     if (!query) {
       return files;
     } else {
-      return files.filter((file) => file.name.toLowerCase().includes(query.toLowerCase()));
+      return files.filter((file) =>
+        file.name.toLowerCase().includes(query.toLowerCase()),
+      );
     }
   },
 });
