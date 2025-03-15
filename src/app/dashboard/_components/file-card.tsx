@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -19,6 +20,7 @@ import {
   GanttChartIcon,
   ImageIcon,
   MoreVertical,
+  StarIcon,
   TrashIcon,
 } from "lucide-react";
 import {
@@ -39,6 +41,7 @@ import Image from "next/image";
 function FileCardActions({ file }: { file: Doc<"files"> }) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const deleteFile = useMutation(api.files.deleteFile);
+  const toggleFavorite = useMutation(api.files.toggleFavorie);
   return (
     <>
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
@@ -55,7 +58,7 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
             <AlertDialogAction
               onClick={async () => {
                 deleteFile({
-                  filedId: file._id,
+                  fileId: file._id,
                 });
                 toast.success("File deleted");
               }}
@@ -70,6 +73,16 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
           <MoreVertical />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem
+            onClick={() => {
+              toggleFavorite({ fileId: file._id });
+            }}
+            className="flex gap-1  items-center cursor-pointer"
+          >
+            <StarIcon className="w-4 h-4 " />
+            Favorite
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
               setIsConfirmOpen(true);
