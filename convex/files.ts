@@ -80,6 +80,7 @@ export const getFiles = query({
       );
     }
     if (args.favorites) {
+      console.log("favorites: ", args.favorites);
       const user = await ctx.db
         .query("users")
         .withIndex("by_tokenIdentifier", (q) =>
@@ -133,8 +134,11 @@ export const toggleFavorie = mutation({
     }
     const favorite = await ctx.db
       .query("favorites")
-      .withIndex("by_userId_fileId_orgId", (q) =>
-        q.eq("userId", access?.user._id).eq("fileId", access?.file._id),
+      .withIndex("by_userId_orgId_fileId", (q) =>
+        q
+          .eq("userId", access?.user._id)
+          .eq("orgId", access.file.orgId)
+          .eq("fileId", access.file._id),
       )
       .first();
     if (!favorite) {
