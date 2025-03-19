@@ -12,7 +12,7 @@ import { useState } from "react";
 const PlaceHolder = () => {
   return (
     <div className="flex flex-col gap-4 w-full mt-12 items-center">
-      <Image src={"empty.svg"} height={200} width={200} alt="" />
+      <Image src={"../../empty.svg"} height={200} width={200} alt="" />
       <div className="text-2xl">
         You have no file, go ahead and upload one now
       </div>
@@ -23,10 +23,10 @@ const PlaceHolder = () => {
 
 export default function FileBrowser({
   title,
-  favorites,
+  favoriteOnly,
 }: {
   title: string;
-  favorites?: boolean;
+  favoriteOnly?: boolean;
 }) {
   const organization = useOrganization();
   let orgId: undefined | string = undefined;
@@ -35,10 +35,15 @@ export default function FileBrowser({
   if (organization.isLoaded && user.isLoaded) {
     orgId = organization.organization?.id ?? user.user?.id;
   }
+  const favorites = useQuery(
+    api.files.getAllFavorites,
+    orgId ? { orgId } : "skip",
+  );
   const files = useQuery(
     api.files.getFiles,
-    orgId ? { orgId, query, favorites } : "skip",
+    orgId ? { orgId, query, favorites: favoriteOnly } : "skip",
   );
+
   const isLoading = files === undefined;
   return (
     <div>
@@ -59,8 +64,14 @@ export default function FileBrowser({
 
           <div className="grid grid-cols-4 gap-4">
             {files?.map((file) => {
-              return <FileCard key={file._id} file={file} />;
-            })}
+              return (
+                <FileCard
+                  favorites={favorites || []}
+                  key={file._id}
+                  file={file}
+                />
+              );
+             })}
           </div>
         </>
       )}

@@ -20,6 +20,7 @@ import {
   GanttChartIcon,
   ImageIcon,
   MoreVertical,
+  StarHalf,
   StarIcon,
   TrashIcon,
 } from "lucide-react";
@@ -38,7 +39,13 @@ import { api } from "../../../../convex/_generated/api";
 import { toast } from "sonner";
 import Image from "next/image";
 
-function FileCardActions({ file }: { file: Doc<"files"> }) {
+function FileCardActions({
+  file,
+  isFavorited,
+}: {
+  file: Doc<"files">;
+  isFavorited: boolean;
+}) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const deleteFile = useMutation(api.files.deleteFile);
   const toggleFavorite = useMutation(api.files.toggleFavorie);
@@ -79,7 +86,11 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
             }}
             className="flex gap-1  items-center cursor-pointer"
           >
-            <StarIcon className="w-4 h-4 " />
+            {isFavorited ? (
+              <StarIcon className="h-4 w-4" color="" />
+            ) : (
+              <StarHalf className="w-4 h-4 " />
+            )}
             Favorite
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -104,12 +115,22 @@ function getFileUrl(fileId: Id<"_storage">): string {
   return getImageUrl.href;
 }
 
-const FileCard = ({ file }: { file: Doc<"files"> }) => {
+const FileCard = ({
+  file,
+  favorites,
+}: {
+  file: Doc<"files">;
+  favorites: Doc<"favorites">[];
+}) => {
   const typeIcons = {
     image: <ImageIcon />,
     pdf: <FileTextIcon />,
     csv: <GanttChartIcon />,
   } as Record<Doc<"files">["type"], ReactNode>;
+
+  const isFavorited = favorites.some(
+    (favorite) => favorite.fileId === file._id,
+  );
 
   return (
     <Card>
@@ -119,7 +140,7 @@ const FileCard = ({ file }: { file: Doc<"files"> }) => {
           {file.name}
         </CardTitle>
         <div className="absolute top-2 right-2">
-          <FileCardActions file={file} />
+          <FileCardActions isFavorited={isFavorited} file={file} />
         </div>
       </CardHeader>
       <CardContent className="h-[200px] flex justify-center items-center">
