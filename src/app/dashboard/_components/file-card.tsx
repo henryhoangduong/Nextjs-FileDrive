@@ -38,6 +38,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { toast } from "sonner";
 import Image from "next/image";
+import { Protect } from "@clerk/nextjs";
 
 function FileCardActions({
   file,
@@ -80,23 +81,26 @@ function FileCardActions({
           <MoreVertical />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem
-            onClick={() => {
-              toggleFavorite({ fileId: file._id });
-            }}
-            className="flex gap-1  items-center cursor-pointer"
-          >
-            {isFavorited ? (
-              <div className="flex gap-1 items-center cursor-pointer">
-                <StarIcon className="h-4 w-4" color="" /> Unfavorite
-              </div>
-            ) : (
-              <div className="flex gap-1 items-center">
-                <StarHalf className="w-4 h-4 " /> Favorite
-              </div>
-            )}
-            Favorite
-          </DropdownMenuItem>
+          <Protect role="org:admin" fallback={<></>}>
+            <DropdownMenuItem
+              onClick={() => {
+                toggleFavorite({ fileId: file._id });
+              }}
+              className="flex gap-1  items-center cursor-pointer"
+            >
+              {isFavorited ? (
+                <div className="flex gap-1 items-center cursor-pointer">
+                  <StarIcon className="h-4 w-4" color="" /> Unfavorite
+                </div>
+              ) : (
+                <div className="flex gap-1 items-center">
+                  <StarHalf className="w-4 h-4 " /> Favorite
+                </div>
+              )}
+              Favorite
+            </DropdownMenuItem>
+          </Protect>
+
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
