@@ -57,8 +57,7 @@ function FileCardActions({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              This action will mark this file for deletion process. Files are deleted after 30 days
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -68,7 +67,7 @@ function FileCardActions({
                 deleteFile({
                   fileId: file._id,
                 });
-                toast.success("File deleted");
+                toast.success("File marked for deletion");
               }}
             >
               Continue

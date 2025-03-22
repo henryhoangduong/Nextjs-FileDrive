@@ -34,11 +34,11 @@ http.route({
             role: result.data.role === "admin" ? "admin" : "member",
           });
           break;
-                case "organizationMembership.updated":
-          await ctx.runMutation(internal.users.addOrgIdToUser, {
+        case "organizationMembership.updated":
+          await ctx.runMutation(internal.users.updateRoleInOrgForUser, {
             tokenIdentifier: `https://capital-spaniel-28.clerk.accounts.dev|${result.data.id}`,
             orgId: result.data.organization.id,
-            role: result.data.role === "admin" ? "admin" : "member",
+            role: result.data.role === "org:admin" ? "admin" : "member",
           });
           break;
       }

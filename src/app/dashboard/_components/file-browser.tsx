@@ -24,9 +24,11 @@ const PlaceHolder = () => {
 export default function FileBrowser({
   title,
   favoriteOnly,
+  deletedOnly,
 }: {
   title: string;
   favoriteOnly?: boolean;
+  deletedOnly?: boolean;
 }) {
   const organization = useOrganization();
   let orgId: undefined | string = undefined;
@@ -41,7 +43,9 @@ export default function FileBrowser({
   );
   const files = useQuery(
     api.files.getFiles,
-    orgId ? { orgId, query, favorites: favoriteOnly } : "skip",
+    orgId
+      ? { orgId, query, favorites: favoriteOnly, deletedOnly: deletedOnly }
+      : "skip",
   );
 
   const isLoading = files === undefined;

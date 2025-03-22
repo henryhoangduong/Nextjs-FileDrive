@@ -27,18 +27,29 @@ export const createUser = internalMutation({
 export const addOrgIdToUser = internalMutation({
   args: { tokenIdentifier: v.string(), orgId: v.string(), role: roles },
   async handler(ctx, args) {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", args.tokenIdentifier),
-      )
-      .first();
-    if (!user) {
-      throw new ConvexError("expect user to be defined");
-    }
+    const user = await getUser(ctx, args.tokenIdentifier);
+    if (!user) return;
     await ctx.db.patch(user._id, {
       tokenIdentifier: args.tokenIdentifier,
       orgIds: [...user.orgIds, { orgId: args.orgId, role: args.role }],
+    });
+  },
+});
+
+export const updateRoleInOrgForUser = internalMutation({
+  args: { tokenIdentifier: v.string(), orgId: v.string(), role: roles },
+  async handler(ctx, args) {
+    const user = await getUser(ctx, args.tokenIdentifier);
+    if (!user) return;
+    const org = user.orgIds.find((org) => org.orgId === args.orgId);
+    if (!org) {
+      throw new ConvexError(
+        "expected an org on the user but was not found when updating",
+      );
+    }
+    org.role = args.role;
+    await ctx.db.patch(user._id, {
+      orgIds: user.orgIds,
     });
   },
 });

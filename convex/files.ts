@@ -3,7 +3,6 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { fileTypes } from "./schema";
 import { Id } from "./_generated/dataModel";
-import { access } from "fs";
 
 export const generateUploadUrl = mutation(async (ctx) => {
   const identity = await ctx.auth.getUserIdentity();
@@ -63,6 +62,7 @@ export const getFiles = query({
     orgId: v.string(),
     query: v.optional(v.string()),
     favorites: v.optional(v.boolean()),
+    deletedOnly: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
     const hasAccess = await hasAccessToOrg(ctx, args.orgId);
@@ -80,16 +80,21 @@ export const getFiles = query({
         file.name.toLowerCase().includes(query.toLowerCase()),
       );
     }
+    const favorites = await ctx.db
+      .query("favorites")
+      .withIndex("by_userId_orgId_fileId", (q) =>
+        q.eq("userId", hasAccess.user._id).eq("orgId", args.orgId),
+      )
+      .collect();
     if (args.favorites) {
-      const favorites = await ctx.db
-        .query("favorites")
-        .withIndex("by_userId_orgId_fileId", (q) =>
-          q.eq("userId", hasAccess.user._id).eq("orgId", args.orgId),
-        )
-        .collect();
       files = files.filter((file) =>
         favorites.some((favorite) => favorite.fileId == file._id),
       );
+    }
+    if (args.deletedOnly) {
+      files = files.filter((file) => file.shouldDelete);
+    } else{
+      files = files.filter((file)=> !file.shouldDelete )
     }
     return files;
   },
@@ -108,7 +113,9 @@ export const deleteFile = mutation({
     if (!isAdmin) {
       throw new ConvexError("You dont have admin access to this file");
     }
-    await ctx.db.delete(args.fileId);
+    await ctx.db.patch(args.fileId, {
+      shouldDelete: true,
+    });
   },
 });
 
