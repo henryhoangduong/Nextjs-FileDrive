@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   OrganizationSwitcher,
   SignedOut,
-  SignIn,
   SignInButton,
   UserButton,
 } from "@clerk/nextjs";

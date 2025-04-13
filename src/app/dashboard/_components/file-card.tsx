@@ -23,6 +23,7 @@ import {
   StarHalf,
   StarIcon,
   TrashIcon,
+  UndoIcon,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -49,6 +50,7 @@ function FileCardActions({
 }) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const deleteFile = useMutation(api.files.deleteFile);
+  const restoreFile = useMutation(api.files.restoreFile);
   const toggleFavorite = useMutation(api.files.toggleFavorie);
   return (
     <>
@@ -57,7 +59,8 @@ function FileCardActions({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will mark this file for deletion process. Files are deleted after 30 days
+              This action will mark this file for deletion process. Files are
+              deleted after 30 days
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -103,10 +106,23 @@ function FileCardActions({
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
-              setIsConfirmOpen(true);
+              if (file.shouldDelete) {
+                restoreFile({ fileId: file._id });
+              } else {
+                setIsConfirmOpen(true);
+              }
             }}
             className="flex gap-1 text-red-600 items-center cursor-pointer"
           >
+            {file.shouldDelete ? (
+              <div className="flex gap-1 text-green-600 items-center cursor-pointer ">
+                <UndoIcon className="w-4 h-4" /> Restore
+              </div>
+            ) : (
+              <div className="flex gap-1 text-red-600 items-center cursor-pointer">
+                <UndoIcon className="w-4 h-4" /> Delete
+              </div>
+            )}
             <TrashIcon className="w-4 h-4 " />
             Delete
           </DropdownMenuItem>
