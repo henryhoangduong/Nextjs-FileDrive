@@ -4,6 +4,9 @@ import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import Header from "./header";
 import { Toaster } from "@/components/ui/sonner";
+import { Footer } from "./footer";
+import { Inter } from "next/font/google";
+const inter = Inter({ subsets: ["latin"] });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +30,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={inter.className}>
         <ConvexClientProvider>
+          <Toaster />
           <Header />
           {children}
-          <Toaster />
+          <Footer />
         </ConvexClientProvider>
       </body>
     </html>

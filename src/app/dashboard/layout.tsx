@@ -1,3 +1,4 @@
+import { Footer } from "../footer";
 import SideNav from "../side-nav";
 
 export default function RootLayout({
